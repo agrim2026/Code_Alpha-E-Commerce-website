@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NovaCart - My Orders</title>
+    <style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f5f7fb;
+        color: #1f2937;
+    }
+
+    .navbar {
+        background: #111827;
+        color: white;
+        padding: 18px 50px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .logo {
+        font-size: 24px;
+        font-weight: bold;
+    }
+
+    .back-btn {
+        color: white;
+        text-decoration: none;
+        background: #2563eb;
+        padding: 10px 16px;
+        border-radius: 6px;
+    }
+
+    .page {
+        max-width: 1000px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+
+    .page-title {
+        margin-bottom: 25px;
+    }
+
+    #orders-container {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .order-card {
+        background: white;
+        border-radius: 12px;
+        padding: 24px;
+        box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+    }
+
+    .order-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 15px;
+        margin-bottom: 15px;
+    }
+
+    .status {
+        display: inline-block;
+        background: #fef3c7;
+        color: #92400e;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .product-item {
+        padding: 12px 0;
+        border-bottom: 1px solid #eee;
+    }
+
+    .order-total {
+        font-size: 20px;
+        font-weight: bold;
+        margin-top: 20px;
+        text-align: right;
+
+    }
+
+    .address {
+        color: #6b7280;
+        margin-top: 12px;
+    }
+    .status.pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.status.cancelled {
+    background: #f8d7da;
+    color: #721c24;
+}
+</style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+    <div class="logo">NovaCart</div>
+
+    <a href="index.html" class="back-btn">
+        Back to Home
+    </a>
+</nav>
+
+<div class="page">
+    <h1 class="page-title">My Orders</h1>
+
+    <div id="orders-container">
+        Loading orders...
+    </div>
+</div>
+<script>
+async function loadOrders() {
+
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    if (!user) {
+        document.getElementById("orders-container").innerHTML =
+            "<p>Please login first.</p>";
+        return;
+    }
+
+    try {
+
+        const response = await fetch(`/api/orders/${user.id}`);
+        const orders = await response.json();
+
+        const container = document.getElementById("orders-container");
+
+        if (!response.ok) {
+            container.innerHTML = `<p>${orders.message || "Failed to load orders"}</p>`;
+            return;
+        }
+
+        if (orders.length === 0) {
+            container.innerHTML = "<p>No orders found.</p>";
+            return;
+        }
+
+        container.innerHTML = "";
+
+        orders.forEach(order => {
+
+            const orderDiv = document.createElement("div");
+
+            orderDiv.className = "order-card";
+
+orderDiv.innerHTML = `
+    <div class="order-header">
+        <div>
+            <h3>Order #${order._id.slice(-6)}</h3>
+            <small>Order ID: ${order._id}</small>
+        </div>
+
+        <span class="status ${order.status.toLowerCase()}">${order.status}</span>
+    </div>
+
+    <h4>Products</h4>
+
+    ${order.items.map(item => `
+        <div class="product-item">
+            <strong>${item.name}</strong>
+            <p>
+                ₹${item.price} × ${item.quantity}
+            </p>
+        </div>
+    `).join("")}
+    <p>
+    <strong>Order Date:</strong>
+    ${new Date(order.createdAt).toLocaleDateString()}
+</p>
+
+    <div class="address">
+        <strong>Delivery Address:</strong><br>
+        ${order.address}
+    </div>
+
+    <div class="order-total">
+        Total: ₹${order.totalAmount}
+    </div>
+`;
+if (order.status === "Pending") {
+    const cancelBtn = document.createElement("button");
+    cancelBtn.textContent = "Cancel Order";
+
+    cancelBtn.onclick = async () => {
+        const response = await fetch(`/api/orders/${order._id}/cancel`, {
+            method: "PUT"
+        });
+
+        if (response.ok) {
+            alert("Order cancelled successfully");
+            loadOrders();
+        } else {
+            alert("Failed to cancel order");
+        }
+    };
+
+    orderDiv.appendChild(cancelBtn);
+}
+            container.appendChild(orderDiv);
+        });
+
+    } catch (error) {
+
+        console.error(error);
+
+        document.getElementById("orders-container").innerHTML =
+            "<p>Unable to load orders.</p>";
+    }
+}
+
+loadOrders();
+</script>
+</body>
+</html>

@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>NovaCart - Modern Online Store</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f7f8fc;
+            color: #222;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            background: #111827;
+            color: white;
+            padding: 18px 7%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 26px;
+            font-weight: bold;
+            color: #60a5fa;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .cart {
+            background: #2563eb;
+            padding: 10px 16px;
+            border-radius: 8px;
+        }
+
+        /* HERO */
+        .hero {
+            min-height: 430px;
+            padding: 80px 7%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(135deg, #dbeafe, #eef2ff);
+        }
+
+        .hero-text {
+            max-width: 600px;
+        }
+
+        .hero-text h1 {
+            font-size: 52px;
+            margin-bottom: 20px;
+            color: #111827;
+        }
+
+        .hero-text p {
+            font-size: 19px;
+            color: #4b5563;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .shop-btn {
+            display: inline-block;
+            background: #2563eb;
+            color: white;
+            padding: 14px 25px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .hero-icon {
+            font-size: 150px;
+        }
+
+        /* SECTION */
+        .section {
+            padding: 60px 7%;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 35px;
+            font-size: 32px;
+        }
+
+        /* CATEGORIES */
+        .categories {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .category {
+            background: white;
+            padding: 30px;
+            text-align: center;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        .category-icon {
+            font-size: 45px;
+            margin-bottom: 15px;
+        }
+
+        .category h3 {
+            margin-bottom: 8px;
+        }
+
+        /* PRODUCTS */
+        .products {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px;
+        }
+
+        .product {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            transition: 0.3s;
+        }
+
+        .product:hover {
+            transform: translateY(-5px);
+        }
+
+        .product-image {
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #eef2ff;
+            font-size: 80px;
+        }
+
+        .product-info {
+            padding: 20px;
+        }
+
+        .product-info h3 {
+            margin-bottom: 10px;
+        }
+
+        .price {
+            color: #2563eb;
+            font-size: 21px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .buy-btn {
+            width: 100%;
+            border: none;
+            background: #111827;
+            color: white;
+            padding: 12px;
+            border-radius: 7px;
+            cursor: pointer;
+        }
+
+        /* FOOTER */
+        footer {
+            background: #111827;
+            color: white;
+            text-align: center;
+            padding: 30px;
+            margin-top: 30px;
+        }
+
+        /* MOBILE */
+        @media (max-width: 800px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero {
+                text-align: center;
+                flex-direction: column;
+                gap: 30px;
+            }
+
+            .hero-text h1 {
+                font-size: 38px;
+            }
+
+            .categories,
+            .products {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 500px) {
+            .categories,
+            .products {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="logo">NovaCart</div>
+
+        <ul class="nav-links">
+            <li><a href="#">Home</a></li>
+            <li><a href="#categories">Categories</a></li>
+            <li><a href="#products">Products</a></li>
+            <li><a href="#contact">Contact</a></li>
+            <li><a href="myorders.html">My Orders</a></li>
+        </ul>
+
+<a href="/cart.html" class="cart">
+    🛒 Cart <span id="cart-count">0</span>
+</a>
+<a href="/login.html" class="auth-btn">Login</a>
+<a href="/signup.html" class="auth-btn">Sign Up</a>
+    </nav>
+
+
+    <!-- HERO SECTION -->
+    <section class="hero">
+        <div class="hero-text">
+            <h1>Shop Smart.<br>Live Better.</h1>
+
+            <p>
+                Discover amazing products at great prices.
+                Welcome to NovaCart, your modern online shopping destination.
+            </p>
+
+            <a href="#products" class="shop-btn">
+                Shop Now →
+            </a>
+        </div>
+
+        <div class="hero-icon">
+            🛍️
+        </div>
+    </section>
+
+
+    <!-- CATEGORIES -->
+    <section class="section" id="categories">
+        <h2 class="section-title">Shop By Category</h2>
+
+        <div class="categories">
+
+            <div class="category">
+                <div class="category-icon">📱</div>
+                <h3>Electronics</h3>
+                <p>Latest gadgets</p>
+            </div>
+
+            <div class="category">
+                <div class="category-icon">👕</div>
+                <h3>Fashion</h3>
+                <p>Modern styles</p>
+            </div>
+
+            <div class="category">
+                <div class="category-icon">🏠</div>
+                <h3>Home</h3>
+                <p>Make your home better</p>
+            </div>
+
+            <div class="category">
+                <div class="category-icon">🎮</div>
+                <h3>Gaming</h3>
+                <p>Level up your setup</p>
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- PRODUCTS -->
+    <section class="section" id="products">
+        <h2 class="section-title">Featured Products</h2>
+
+        <div class="products">
+
+            <div class="product">
+                <div class="product-image">🎧</div>
+
+                <div class="product-info">
+                    <h3>Wireless Headphones</h3>
+                    <div class="price">₹1,999</div>
+<button class="buy-btn"
+        data-name="Wireless Headphones"
+        data-price="1999">
+    Add to Cart
+</button>
+                </div>
+            </div>
+
+
+            <div class="product">
+                <div class="product-image">⌚</div>
+
+                <div class="product-info">
+                    <h3>Smart Watch</h3>
+                    <div class="price">₹2,499</div>
+<<button class="buy-btn"
+        data-name="Smart Watch"
+        data-price="2499">
+    Add to Cart
+</button>
+                </div>
+            </div>
+
+
+            <div class="product">
+                <div class="product-image">👟</div>
+
+                <div class="product-info">
+                    <h3>Sport Shoes</h3>
+                    <div class="price">₹1,799</div>
+<button class="buy-btn"
+        data-name="Sport Shoes"
+        data-price="1799">
+    Add to Cart
+</button>
+                </div>
+            </div>
+
+
+            <div class="product">
+                <div class="product-image">🎒</div>
+
+                <div class="product-info">
+                    <h3>Premium Backpack</h3>
+                    <div class="price">₹999</div>
+<button class="buy-btn"
+        data-name="Premium Backpack"
+        data-price="999">
+    Add to Cart
+</button>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- FOOTER -->
+    <footer id="contact">
+        <h3>NovaCart</h3>
+        <p>© 2026 NovaCart. All rights reserved.</p>
+    </footer>
+<script>
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    const buttons = document.querySelectorAll(".buy-btn");
+    const cartCountElement = document.getElementById("cart-count");
+
+    function updateCartCount() {
+        cartCountElement.textContent = cart.length;
+    }
+
+    buttons.forEach(button => {
+        button.addEventListener("click", () => {
+
+            const product = {
+                name: button.dataset.name,
+                price: Number(button.dataset.price)
+            };
+
+            cart.push(product);
+
+            localStorage.setItem("cart", JSON.stringify(cart));
+            document.getElementById("cart-count").textContent = cart.length;
+
+            updateCartCount();
+
+            alert(product.name + " added to cart!");
+        });
+    });
+// Load products from MongoDB
+async function loadProducts() {
+    try {
+        const response = await fetch("/api/products");
+        const products = await response.json();
+
+        const productsContainer = document.querySelector(".products");
+
+        // Remove old static products
+        productsContainer.innerHTML = "";
+
+        // Add products from MongoDB
+        products.forEach(product => {
+            const productDiv = document.createElement("div");
+            productDiv.className = "product";
+
+            productDiv.innerHTML = `
+                <div class="product-image">
+                    🛍️
+                </div>
+
+                <div class="product-info">
+                    <h3>${product.name}</h3>
+                    <div class="price">₹${product.price}</div>
+
+                    <button
+                        class="buy-btn"
+                        data-name="${product.name}"
+                        data-price="${product.price}">
+                        Add to Cart
+                    </button>
+                </div>
+            `;
+
+            productsContainer.appendChild(productDiv);
+        });
+        document.querySelectorAll(".buy-btn").forEach(button => {
+    button.addEventListener("click", () => {
+        const name = button.dataset.name;
+        const price = Number(button.dataset.price);
+
+        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+        cart.push({
+            name: name,
+            price: price
+        });
+
+        localStorage.setItem("cart", JSON.stringify(cart));
+
+        updateCartCount();
+
+        alert(`${name} added to cart!`);
+    });
+});
+
+    } catch (error) {
+        console.error("Failed to load products:", error);
+    }
+}
+
+loadProducts();
+    updateCartCount();
+
+function updateCartCount() {
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    document.getElementById("cart-count").textContent = cart.length;
+}
+
+updateCartCount();
+const user = JSON.parse(localStorage.getItem("user"));
+
+if (user) {
+    console.log("Logged in user:", user.name);
+}
+</script>
+</body>
+</html>

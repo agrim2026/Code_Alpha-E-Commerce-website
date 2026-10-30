@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>NovaCart - Checkout</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            background: #f7f8fc;
+            color: #222;
+        }
+
+        .navbar {
+            background: #111827;
+            color: white;
+            padding: 18px 7%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            color: #60a5fa;
+            font-size: 26px;
+            font-weight: bold;
+        }
+
+        .back {
+            color: white;
+            text-decoration: none;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 900px;
+            margin: 40px auto;
+        }
+
+        .checkout-box {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-top: 18px;
+            margin-bottom: 7px;
+            font-weight: bold;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #d1d5db;
+            border-radius: 7px;
+            font-size: 16px;
+        }
+
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
+        .order-summary {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f3f4f6;
+            border-radius: 10px;
+        }
+
+        .place-order {
+            width: 100%;
+            margin-top: 25px;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            background: #2563eb;
+            color: white;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .place-order:hover {
+            background: #1d4ed8;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="logo">NovaCart</div>
+
+        <a href="/cart.html" class="back">
+            ← Back to Cart
+        </a>
+    </nav>
+
+    <div class="container">
+
+        <div class="checkout-box">
+
+            <h1>Checkout</h1>
+
+            <form id="checkout-form">
+
+                <label for="name">Full Name</label>
+                <input
+                    type="text"
+                    id="name"
+                    placeholder="Enter your name"
+                    required
+                >
+
+                <label for="phone">Phone Number</label>
+                <input
+                    type="tel"
+                    id="phone"
+                    placeholder="Enter your phone number"
+                    required
+                >
+
+                <label for="address">Delivery Address</label>
+                <textarea
+                    id="address"
+                    placeholder="Enter your delivery address"
+                    required
+                ></textarea>
+
+                <label for="city">City</label>
+                <input
+                    type="text"
+                    id="city"
+                    placeholder="Enter your city"
+                    required
+                >
+
+                <div class="order-summary">
+                    <h2>Order Summary</h2>
+                    <p>
+                        Total:
+                        ₹<span id="checkout-total">0</span>
+                    </p>
+                </div>
+
+                <button type="submit" id="placeOrderBtn" class="place-order">
+                    Place Order
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <script>
+        const cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+        let total = 0;
+
+        cart.forEach(product => {
+            const quantity = product.quantity || 1;
+            total += product.price * quantity;
+        });
+
+        document.getElementById("checkout-total").textContent = total;
+
+        document.getElementById("checkout-form")
+            .addEventListener("submit", function(event) {
+
+                event.preventDefault();
+
+                
+            });
+    </script>
+<script>
+document.getElementById("placeOrderBtn").addEventListener("click", async function () {
+
+    const user = JSON.parse(localStorage.getItem("user"));
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    if (!user) {
+        alert("Please login first");
+        window.location.href = "/login.html";
+        return;
+    }
+
+    if (cart.length === 0) {
+        alert("Your cart is empty");
+        return;
+    }
+
+    const address = document.getElementById("address").value;
+
+    if (!address) {
+        alert("Please enter your address");
+        return;
+    }
+
+    try {
+
+console.log("ORDER DATA:", {
+    userId: user.id,
+    items: cart,
+    totalAmount: total,
+    address: address
+});
+console.log("USER:", user);
+console.log("USER ID:", user?.id);
+console.log("CART:", cart);
+console.log("CART LENGTH:", cart?.length);
+console.log("TOTAL:", total);
+console.log("ADDRESS:", address);
+        const response = await fetch("/api/orders", {
+           
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+body: JSON.stringify({
+    userId: user.id,
+items: cart.map(item => ({
+    ...item,
+    quantity: item.quantity || 1
+})),
+    totalAmount: total,
+    address: address
+
+            })
+        });
+
+const data = await response.json();
+console.log("SERVER RESPONSE:", data);
+        if (response.ok) {
+
+            alert("Order placed successfully!");
+
+            localStorage.removeItem("cart");
+
+            window.location.href = "/success.html";
+
+        } else {
+
+            alert(data.message || "Failed to place order");
+        }
+
+    } catch (error) {
+
+        console.error(error);
+        alert("Something went wrong");
+    }
+});
+</script>
+</body>
+</html>

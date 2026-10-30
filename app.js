@@ -52,7 +52,7 @@ async function connectDB() {
 }
 
 // MongoDB connection middleware for API requests
-app.use("/api", async (req, res, next) => {
+const mongoMiddleware = async (req, res, next) => {
   try {
     await connectDB();
     next();
@@ -65,15 +65,25 @@ app.use("/api", async (req, res, next) => {
       error: error.message,
     });
   }
-});
+};
 
-// API routes
+app.use("/api", mongoMiddleware);
+app.use("/products", mongoMiddleware);
+app.use("/auth", mongoMiddleware);
+app.use("/orders", mongoMiddleware);
+
+// API routes (support both /api/* and /* paths in serverless)
 app.use("/api/products", productRoutes);
+app.use("/products", productRoutes);
+
 app.use("/api/auth", authRoutes);
+app.use("/auth", authRoutes);
+
 app.use("/api/orders", orderRoutes);
+app.use("/orders", orderRoutes);
 
 // Health check endpoint
-app.get(["/api", "/api/health"], (req, res) => {
+app.get(["/api", "/api/health", "/health"], (req, res) => {
   res.json({
     success: true,
     message: "E-Commerce API is running",
@@ -87,6 +97,9 @@ app.get("/", (req, res) => {
 });
 
 app.get("/:page", (req, res, next) => {
+  if (req.params.page.startsWith("api")) {
+    return next();
+  }
   let file = req.params.page;
   if (!file.endsWith(".html")) {
     file += ".html";

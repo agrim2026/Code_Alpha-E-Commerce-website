@@ -8,6 +8,9 @@ const path = require("path");
 const productRoutes = require("./Routes/productroutes");
 const authRoutes = require("./Routes/authroutes");
 const orderRoutes = require("./Routes/orderroutes");
+const cartRoutes = require("./Routes/cartroutes");
+const wishlistRoutes = require("./Routes/wishlistroutes");
+const adminRoutes = require("./Routes/adminroutes");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -67,12 +70,16 @@ const mongoMiddleware = async (req, res, next) => {
   }
 };
 
+// Apply database connection middleware to all API paths
 app.use("/api", mongoMiddleware);
 app.use("/products", mongoMiddleware);
 app.use("/auth", mongoMiddleware);
 app.use("/orders", mongoMiddleware);
+app.use("/cart", mongoMiddleware);
+app.use("/wishlist", mongoMiddleware);
+app.use("/admin", mongoMiddleware);
 
-// API routes (support both /api/* and /* paths in serverless)
+// API routes (support both /api/* and root/* paths in serverless)
 app.use("/api/products", productRoutes);
 app.use("/products", productRoutes);
 
@@ -82,12 +89,29 @@ app.use("/auth", authRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/orders", orderRoutes);
 
-// Health check endpoint
+app.use("/api/cart", cartRoutes);
+app.use("/cart-api", cartRoutes);
+
+app.use("/api/wishlist", wishlistRoutes);
+app.use("/wishlist-api", wishlistRoutes);
+
+app.use("/api/admin", adminRoutes);
+app.use("/admin-api", adminRoutes);
+
+// Health check and API Catalog endpoint
 app.get(["/api", "/api/health", "/health"], (req, res) => {
   res.json({
     success: true,
-    message: "E-Commerce API is running",
+    message: "NovaCart E-Commerce Full Backend is running",
     database: mongoose.connection.readyState === 1 ? "connected" : "disconnected",
+    endpoints: {
+      auth: ["POST /api/auth/signup", "POST /api/auth/login", "GET /api/auth/profile", "PUT /api/auth/profile", "POST /api/auth/change-password"],
+      products: ["GET /api/products", "GET /api/products/categories", "GET /api/products/featured", "GET /api/products/:id", "POST /api/products", "PUT /api/products/:id", "DELETE /api/products/:id"],
+      orders: ["POST /api/orders", "GET /api/orders/:userId", "GET /api/orders/order/:orderId", "PUT /api/orders/:orderId/cancel", "PUT /api/orders/:orderId/status"],
+      cart: ["GET /api/cart/:userId", "POST /api/cart/add", "PUT /api/cart/update", "DELETE /api/cart/remove", "DELETE /api/cart/clear/:userId"],
+      wishlist: ["GET /api/wishlist/:userId", "POST /api/wishlist/toggle", "DELETE /api/wishlist/remove"],
+      admin: ["GET /api/admin/stats", "GET /api/admin/orders", "PUT /api/admin/orders/:orderId/status", "GET /api/admin/users", "DELETE /api/admin/users/:userId"],
+    },
   });
 });
 
